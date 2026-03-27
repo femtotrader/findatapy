@@ -37,6 +37,7 @@ import json
 import datetime
 from datetime import datetime
 from datetime import timedelta
+from datetime import timezone
 import time as time_library
 import re
 import concurrent.futures
@@ -1460,7 +1461,7 @@ class DataVendorFlatFile(DataVendor):
                             parsed_dt = datetime.strptime(meta_data_cache["modified_datetime"],
                                                           "%Y-%m-%d %H:%M:%S %z")
                             # Convert to UTC regardless of what timezone was in the string
-                            meta_data_cache["modified_datetime"] = parsed_dt.astimezone(datetime.timezone.utc)
+                            meta_data_cache["modified_datetime"] = parsed_dt.astimezone(timezone.utc)
 
                         is_same = io_engine.is_same_file(
                             file_meta_data_1=meta_data_cache,
@@ -1476,10 +1477,10 @@ class DataVendorFlatFile(DataVendor):
                         # Convert to UTC before formatting to ensure consistent timezone
                         modified_dt = meta_data_file["modified_datetime"]
                         if modified_dt.tzinfo is not None:
-                            modified_dt_utc = modified_dt.astimezone(datetime.timezone.utc)
+                            modified_dt_utc = modified_dt.astimezone(timezone.utc)
                         else:
                             # If naive, assume UTC
-                            modified_dt_utc = modified_dt.replace(tzinfo=datetime.timezone.utc)
+                            modified_dt_utc = modified_dt.replace(tzinfo=timezone.utc)
                         
                         meta_data_file["modified_datetime"] = modified_dt_utc.strftime(
                             "%Y-%m-%d %H:%M:%S %z")  # '2026-03-20 14:30:45 +0000'
